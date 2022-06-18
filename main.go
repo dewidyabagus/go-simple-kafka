@@ -1,11 +1,20 @@
 package main
 
 import (
-	"learn/kafka/config"
-	"learn/kafka/events"
+	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"time"
+
+	echo "github.com/labstack/echo/v4"
+
+	"learn/kafka/api"
+	"learn/kafka/config"
+	"learn/kafka/events"
+
+	welcomeController "learn/kafka/api/v1/welcome"
 )
 
 func main() {
@@ -23,23 +32,32 @@ func main() {
 	defer producer.Close()
 
 	events.AnsyncListenKafkaDelivery(producer)
-	kafkaDelivery := events.NewEventProducer(producer)
+	// kafkaDelivery := events.NewEventProducer(producer)
 
-	// dummy data
-	// myTopic := os.Getenv("KAFKA_TEST_TOPIC")
-	users := []string{"eabara", "jsmith", "sgarcia", "jbernard", "htanaka", "awalther"}
-	items := []string{"book", "alarm clock", "t-shirts", "gift card", "batteries", "xxxxx"}
+	// Instan Echo Web Framework
+	e := echo.New()
 
-	for i := 0; i < len(users); i++ {
-		key := users[i]
-		data := items[i]
-
-		kafkaDelivery.SendEventAsync(config.Kafka.TopicTesting, []byte(key), []byte(data))
+	routes := api.Routes{
+		Welcome: welcomeController.NewController(),
 	}
+	routes.New(e)
+
+	go func() {
+		if err := e.Start(fmt.Sprintf("%s:%s", config.App.Host, config.App.ListenPort)); err != nil {
+			log.Println("Shutting Down REST Service")
+			os.Exit(0)
+		}
+	}()
 
 	quit := make(chan os.Signal, 10)
 	signal.Notify(quit, os.Interrupt)
 
 	<-quit
 
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*10)
+	defer cancel()
+
+	if err := e.Shutdown(ctx); err != nil {
+		log.Println("Shutting down error:", err.Error())
+	}
 }
