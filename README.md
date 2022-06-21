@@ -1,9 +1,11 @@
-# Simple Pub/Sub Pattern with Apache Kafka and Go
-Penerapan sederhana pola publisher dan subscriber menggunakan platform Kafka.
+# Pub/Sub Pattern dengan Apache Kafka dan Go
 
-# Desian Sistem
+## Deskripsi
+Penerapan sederhana pola publisher dan subscriber menggunakan platform message broker Apache Kafka dan bahasa pemrograman Go.
 
-# Menjalankan Layanan
+## Desian Sistem
 
-# Sumber Referensi
+## Menjalankan Layanan
+
+## Sumber Referensi
 * [Confluent - Getting Started with Apache Kafak and Go](https://developer.confluent.io/get-started/go/#introduction)
