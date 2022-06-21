@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -18,13 +19,15 @@ func main() {
 		}
 	}()
 
-	consumer, err := config.NewKafkaConsumer()
+	fmt.Println("===>>> CONSUMER SHIPMENT SERVICE <<<===")
+
+	consumer, err := config.NewKafkaConsumer(config.Kafka.ShipmentGroup)
 	if err != nil {
 		panic("new kafka consumer: " + err.Error())
 	}
 	defer consumer.Close()
 
-	if err := consumer.SubscribeTopics([]string{config.Kafka.TopicTesting}, nil); err != nil {
+	if err := consumer.SubscribeTopics([]string{config.Kafka.TopicOrder}, nil); err != nil {
 		panic("subscribe topic: " + err.Error())
 	}
 
@@ -44,7 +47,7 @@ func main() {
 					log.Println("Error Listen Event:", err.Error())
 				}
 			} else {
-				log.Printf("Consumed event from topic %s : key = %-10s value = %s \n", *event.TopicPartition.Topic, string(event.Key), string(event.Value))
+				log.Printf("SHIPMENT: Consumed event from topic %s : key = %-10s value = %s \n", *event.TopicPartition.Topic, string(event.Key), string(event.Value))
 			}
 		}
 	}

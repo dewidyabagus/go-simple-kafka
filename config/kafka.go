@@ -19,10 +19,10 @@ func NewKafkaProducer() (producer *kafka.Producer, err error) {
 }
 
 // Membuat session unyuk kafka consumer
-func NewKafkaConsumer() (consumer *kafka.Consumer, err error) {
+func NewKafkaConsumer(groupID string) (consumer *kafka.Consumer, err error) {
 	config := &kafka.ConfigMap{
 		"bootstrap.servers": Kafka.Host,
-		"group.id":          Kafka.ConsumerGroupId,
+		"group.id":          groupID,
 		"auto.offset.reset": "earliest",
 	}
 

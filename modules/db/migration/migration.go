@@ -1,9 +1,9 @@
 package migration
 
 import (
-	"learn/kafka/modules/db/order"
-
 	"gorm.io/gorm"
+
+	"learn/kafka/modules/db/order"
 )
 
 func AutoMigrate(db *gorm.DB) {

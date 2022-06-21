@@ -4,15 +4,15 @@ import "time"
 
 type (
 	Item struct {
-		ItemID    uint    `validate:"required,min=1"`
-		ItemPrice float64 `validate:"required,min=0"`
-		Qty       uint    `validate:"required,min=1"`
+		ItemID    uint    `validate:"required,min=1" json:"item_id"`
+		ItemPrice float64 `validate:"required,min=0" json:"item_price"`
+		Qty       uint    `validate:"required,min=1" json:"qty"`
 	}
 
 	NewOrder struct {
-		TransactionNo string `validate:"required"`
-		Items         []Item `validate:"dive"`
-		Date          string `validate:"required,datetime=2006-01-02 15:04:05"`
+		TransactionNo string `validate:"required" json:"transaction_no"`
+		Items         []Item `validate:"dive" json:"items"`
+		Date          string `validate:"required,datetime=2006-01-02 15:04:05" json:"date"`
 	}
 
 	Order struct {
@@ -25,5 +25,11 @@ type (
 		CreatedAt     time.Time
 		UpdatedAt     time.Time
 		DeletedAt     time.Time
+	}
+
+	Kafka struct {
+		Host            string
+		TopicOrder      string
+		ConsumerGroupId string
 	}
 )

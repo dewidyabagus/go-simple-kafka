@@ -1,17 +1,14 @@
 package config
 
 import (
+	"learn/kafka/utils/configuration"
 	"os"
 
 	"github.com/joho/godotenv"
 )
 
 var (
-	Kafka struct {
-		Host            string
-		TopicTesting    string
-		ConsumerGroupId string
-	}
+	Kafka = &configuration.Kafka{}
 
 	App struct {
 		Env        string
@@ -44,8 +41,9 @@ func init() {
 
 	// Kafka Config
 	Kafka.Host = os.Getenv("KAFKA_HOST")
-	Kafka.TopicTesting = os.Getenv("KAFKA_TEST_TOPIC")
-	Kafka.ConsumerGroupId = os.Getenv("KAFKA_GROUP_ID")
+	Kafka.TopicOrder = os.Getenv("KAFKA_ORDER_TOPIC")
+	Kafka.ShipmentGroup = os.Getenv("KAFKA_SHIPMENT_GRUOP")
+	Kafka.InventoryGroup = os.Getenv("KAFKA_INVENTORY_GROUP")
 
 	// Database Config
 	Database.Host = os.Getenv("DATABASE_HOST")

@@ -4,7 +4,7 @@
 Penerapan sederhana pola publisher dan subscriber menggunakan platform message broker Apache Kafka dan bahasa pemrograman Go.
 
 ## Desian Sistem
-
+![Desain Layanan](./design_services.jpg)
 ## Menjalankan Layanan
 
 ## Sumber Referensi

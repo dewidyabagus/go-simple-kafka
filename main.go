@@ -15,36 +15,40 @@ import (
 )
 
 func main() {
+	// Cover error from panic function
 	defer func() {
 		if r := recover(); r != nil {
-			log.Println("ERROR:", r)
+			log.Println("Panic Error: ", r)
 		}
 	}()
 
-	// Membuat session kafka bagian producer
+	// Create kafka session for producer
 	producer, err := config.NewKafkaProducer()
 	if err != nil {
 		panic("new kafka producer:" + err.Error())
 	}
 	defer producer.Close()
 
+	// Membuat layanan dibelakang layar untuk mengambil informasi hasil publish event ke topic
+	// apakah berhasil ter-publish atau gagal
 	events.AnsyncListenKafkaDelivery(producer)
-	// kafkaDelivery := events.NewEventProducer(producer)
 
-	// Membuat session database
+	// Create database session (PostgreSQL)
 	db, err := config.NewDatabase()
 	if err != nil {
 		panic("new database:" + err.Error())
 	}
 
+	// Mengumpulkan semua sesi dan mendistribusikan ke masing-masing domain yang menggunakan
 	session := &Session{
 		db:            db,
-		kafkaProducer: producer,
+		kafkaProducer: events.NewEventProducer(producer),
 	}
 
 	// Instan Echo Web Framework
 	e := echo.New()
 
+	// Meregistrasikan hasil dari setup domain modules dan business menjadi suatu layanan REST API
 	session.App().New(e)
 
 	go func() {

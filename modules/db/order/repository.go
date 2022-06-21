@@ -41,6 +41,14 @@ func (r *Repository) CreateNewOrder(ctx context.Context, orders []order.Order) e
 	return r.db.WithContext(ctxWT).Create(r.toModelOrder(orders)).Error
 }
 
+func (r *Repository) CheckExistingTransNo(transNo string) (exists bool, err error) {
+	var count int64
+
+	err = r.db.Model(&Order{}).Where("transaction_no = ?", transNo).Count(&count).Error
+
+	return (count != 0), err
+}
+
 func (r *Repository) toModelOrder(orders []order.Order) []Order {
 	modelOrders := make([]Order, len(orders))
 
