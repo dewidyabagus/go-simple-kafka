@@ -50,3 +50,16 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 192.168.18.17:9092
     networks:
       - kafka_network
+
+  # Layanan database PostgreSQL
+  postgres:
+    image: postgres:13-alpine
+    container_name: postgres
+    ports:
+      - 5433:5432
+    environment:
+      TZ: Asia/Jakarta
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: db
+    networks:
+      - kafka_network
