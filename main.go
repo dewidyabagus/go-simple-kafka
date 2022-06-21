@@ -10,11 +10,8 @@ import (
 
 	echo "github.com/labstack/echo/v4"
 
-	"learn/kafka/api"
 	"learn/kafka/config"
-	"learn/kafka/events"
-
-	welcomeController "learn/kafka/api/v1/welcome"
+	"learn/kafka/modules/events"
 )
 
 func main() {
@@ -34,13 +31,21 @@ func main() {
 	events.AnsyncListenKafkaDelivery(producer)
 	// kafkaDelivery := events.NewEventProducer(producer)
 
+	// Membuat session database
+	db, err := config.NewDatabase()
+	if err != nil {
+		panic("new database:" + err.Error())
+	}
+
+	session := &Session{
+		db:            db,
+		kafkaProducer: producer,
+	}
+
 	// Instan Echo Web Framework
 	e := echo.New()
 
-	routes := api.Routes{
-		Welcome: welcomeController.NewController(),
-	}
-	routes.New(e)
+	session.App().New(e)
 
 	go func() {
 		if err := e.Start(fmt.Sprintf("%s:%s", config.App.Host, config.App.ListenPort)); err != nil {
