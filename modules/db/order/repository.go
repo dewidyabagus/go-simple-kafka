@@ -3,6 +3,8 @@ package order
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"fmt"
 	"time"
 
 	"gorm.io/gorm"
@@ -49,6 +51,23 @@ func (r *Repository) CheckExistingTransNo(transNo string) (exists bool, err erro
 	return (count != 0), err
 }
 
+func (r *Repository) GetOrderByTransNo(ctx context.Context, transNo string) (orders []order.Order, err error) {
+	ctxWT, cancel := context.WithTimeout(ctx, timeOut*time.Second)
+	defer cancel()
+
+	modelOrders := []Order{}
+
+	if err := r.db.WithContext(ctxWT).Order("id").Find(&modelOrders, "transaction_no = ?", transNo).Error; err != nil {
+		return nil, fmt.Errorf("SQL Error: %s", err.Error())
+
+	} else if len(modelOrders) == 0 {
+		return nil, errors.New("error record not found")
+
+	}
+
+	return r.toBusinessOrder(modelOrders), nil
+}
+
 func (r *Repository) toModelOrder(orders []order.Order) []Order {
 	modelOrders := make([]Order, len(orders))
 
@@ -63,4 +82,24 @@ func (r *Repository) toModelOrder(orders []order.Order) []Order {
 	}
 
 	return modelOrders
+}
+
+func (r *Repository) toBusinessOrder(orders []Order) []order.Order {
+	response := make([]order.Order, len(orders))
+
+	for i, item := range orders {
+		response[i] = order.Order{
+			ID:            item.ID,
+			TransactionNo: item.TransactionNo,
+			ItemID:        item.ItemID,
+			ItemPrice:     item.ItemPrice,
+			Qty:           item.Qty,
+			Date:          item.Date,
+			CreatedAt:     item.CreatedAt,
+			UpdatedAt:     item.UpdatedAt,
+			DeletedAt:     item.DeletedAt.Time,
+		}
+	}
+
+	return response
 }

@@ -26,10 +26,4 @@ type (
 		UpdatedAt     time.Time
 		DeletedAt     time.Time
 	}
-
-	Kafka struct {
-		Host            string
-		TopicOrder      string
-		ConsumerGroupId string
-	}
 )

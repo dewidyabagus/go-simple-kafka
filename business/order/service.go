@@ -56,9 +56,13 @@ func (s *service) CreateNewOrder(newOrder *NewOrder) error {
 	}
 
 	if err := s.repository.CreateNewOrder(context.Background(), orders); err != nil {
-		return err
+		return fmt.Errorf("SQL Error: %s", err.Error())
 	}
 
 	// alternative menggunakan os.Getenv() dengan mendistribusikan file config yang dibutuhkan ke business
 	return s.events.SendEventAsync(s.kafkaInfo.TopicOrder, []byte(newOrder.TransactionNo), payload)
+}
+
+func (s *service) GetOrderByTransNo(transNo string) (orders []Order, err error) {
+	return s.repository.GetOrderByTransNo(context.Background(), transNo)
 }
