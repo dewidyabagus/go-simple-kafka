@@ -27,7 +27,7 @@ docker-compose start
 docker compose down
 ```
 
-## Desian Sistem
+## Arsitektur Sistem
 ![Desain Layanan](./design_services.jpg)
 
 Aplikasi pada repository ini dibagi menjadi 3 bagian:
@@ -43,8 +43,7 @@ Menjalankan layanan ```HTTP Order service``` :
 ```bash
 # Makefile
 make run/service
-```
-```bash
+
 # Normal run service
 go run .
 ```
@@ -53,8 +52,7 @@ Menjalankan layanan ```Consumer Shipment Service```
 ```bash
 # Makefile
 make run/consumer-shipment
-```
-```bash
+
 # Normal run service
 go run app/consumer_shipment/main.go
 ```
@@ -63,8 +61,7 @@ Menjalankan layanan ```Consumer Inventory Service```
 ```bash
 # Makefile
 make run/consumer-inventory
-```
-```bash
+
 # Normal run service
 go run app/consumer_inventory/main.go
 ```
